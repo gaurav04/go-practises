@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"example.com/golang/entities"
+	"example.com/marshalling/entities"
 	"fmt"
 )
 
