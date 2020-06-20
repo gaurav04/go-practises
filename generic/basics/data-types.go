@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 
@@ -29,5 +31,21 @@ func main() {
 
 	person := Person{name: "Elliot", age: 24}
 	fmt.Println(person.name)
+
+	type Route struct {
+		Name    string
+		Method  string
+		Pattern string
+	}
+
+	// Routes defines the list of routes of our API
+	var Routes []Route
+
+	Routes = []Route{
+		Route{"Authentication", "POST", "/get-token"},
+		Route{"Authentication", "POST", "/get-token"},
+	}
+
+	fmt.Println(Routes)
 
 }
