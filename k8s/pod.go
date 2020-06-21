@@ -12,10 +12,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// This program lists the pods in a cluster equivalent to
-//
-// kubectl get pods
-//
 func main() {
 	var ns string
 	flag.StringVar(&ns, "namespace", "", "namespace")
