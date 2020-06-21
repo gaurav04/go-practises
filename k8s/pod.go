@@ -41,6 +41,14 @@ func main() {
 
 	// print pods
 	for i, pod := range pods.Items {
-		fmt.Printf("[%d] %s\n", i, pod.GetName())
+		for _, c := range pod.Spec.Containers {
+		fmt.Printf("[%d] %s %s %s\n", i, pod.GetName(), pod.Status.Phase,c.Name)
 	}
 }
+}
+
+// Sample output
+//Run as : go run pod.go --namespace <ns-name>
+//[0] flink-jobmanager-5897bd55 Running flink-jobmanager
+//[1] flink-taskmanager-59c844 Running flink-taskmanager
+
