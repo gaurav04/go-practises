@@ -1,0 +1,56 @@
+1. Run zookeeper
+
+docker run -d \
+--name zookeeper \
+-p 2181:2181 \
+jplock/zookeeper
+
+----------
+
+2. Run kafka
+
+docker run -d \
+--name kafka \
+-p 7203:7203 \
+-p 9092:9092 \
+-e KAFKA_ADVERTISED_HOST_NAME=<host-ip> \
+-e ZOOKEEPER_IP=<host-ip> \
+ches/kafka
+
+---------------
+
+3. Create topic
+docker run \
+--rm ches/kafka kafka-topics.sh \
+--create \
+--topic senz \
+--replication-factor 1 \
+--partitions 1 \
+--zookeeper <host-ip>:2181
+
+------------------
+
+4. List topics
+docker run \
+--rm ches/kafka kafka-topics.sh \
+--list \
+--zookeeper <host-ip>:2181
+
+--------------------
+
+5. Create publisher
+docker run --rm --interactive \
+ches/kafka kafka-console-producer.sh \
+--topic senz \
+--broker-list <host-ip>:9092
+
+---------------------
+
+6. Create consumer
+docker run --rm \
+ches/kafka kafka-console-consumer.sh \
+--topic senz \
+--from-beginning \
+--zookeeper <host-ip>:2181
+
+
