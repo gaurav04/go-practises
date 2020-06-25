@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	brokerAddrs := []string{"192.168.43.30:9092"}
+	brokerAddrs := []string{"<kafka-brokers>:9092"}
 	config := sarama.NewConfig()
 	config.Version = sarama.V0_10_2_1
 	admin, err := sarama.NewClusterAdmin(brokerAddrs, config)
