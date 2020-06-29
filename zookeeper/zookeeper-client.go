@@ -24,7 +24,7 @@ func connect() *zk.Conn {
 
 func main() {
 	conn := connect()
-	data, _, _ := conn.Children("/brokers/topics/senz/partitions")
+	data, _, _ := conn.Children("/brokers/topics/test/partitions")
 	fmt.Println("Total Partition Count", len(data))
 	for _, partitions := range data {
 		fmt.Println(partitions)
