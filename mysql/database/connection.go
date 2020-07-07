@@ -13,4 +13,5 @@ func SetupDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
