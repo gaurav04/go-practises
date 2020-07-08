@@ -1,6 +1,7 @@
 package product
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -57,5 +58,57 @@ func insertProduct(product Product) (int, error) {
 		return 0, err
 	}
 	return int(insertID), nil
+}
 
+func getProduct(productID int) (*Product, error) {
+	row := database.DbConn.QueryRow(`SELECT 
+	productId, 
+	manufacturer, 
+	sku, 
+	upc, 
+	pricePerUnit, 
+	quantityOnHand, 
+	productName 
+	FROM products 
+	WHERE productId = ?`, productID)
+
+	product := &Product{}
+	err := row.Scan(
+		&product.ProductID,
+		&product.Manufacturer,
+		&product.Sku,
+		&product.Upc,
+		&product.PricePerUnit,
+		&product.QuantityOnHand,
+		&product.ProductName,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return product, nil
+}
+func updateProduct(product Product) error {
+	_, err := database.DbConn.Query(`UPDATE products SET 
+		manufacturer=?, 
+		sku=?, 
+		upc=?, 
+		pricePerUnit=?, 
+		quantityOnHand=?, 
+		productName=?
+		WHERE productId=?`,
+		product.Manufacturer,
+		product.Sku,
+		product.Upc,
+		product.PricePerUnit,
+		product.QuantityOnHand,
+		product.ProductName,
+		product.ProductID)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
 }

@@ -54,11 +54,51 @@ func productHandler(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(urlPathSegments[len(urlPathSegments)-1])
 
 	switch r.Method {
+	case http.MethodGet:
+		product, err := getProduct(productID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if product == nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		j, err := json.MarshalIndent(product, "", " ")
+		if err != nil {
+			log.Print(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		_, err = w.Write(j)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	case http.MethodDelete:
 		err := removeProduct(productID)
 		if err != nil {
 			log.Print(err)
 			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+	case http.MethodPut:
+		var product Product
+		err := json.NewDecoder(r.Body).Decode(&product)
+		if err != nil {
+			log.Print(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if *product.ProductID != productID {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		err = updateProduct(product)
+		if err != nil {
+			log.Print(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 
 	}
