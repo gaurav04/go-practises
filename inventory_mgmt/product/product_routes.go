@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func productshandler(w http.ResponseWriter, r *http.Request) {

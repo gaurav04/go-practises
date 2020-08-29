@@ -1,0 +1,6 @@
+github.com/gaurav04/go-practises v0.0.0-20200829055554-4af7f0db3688 h1:THtIfaWuU8T8ImoUGeT6OxFah1gINRcZ7SUhv4GcfuQ=
+github.com/gaurav04/go-practises v0.0.0-20200829055554-4af7f0db3688/go.mod h1:/SlBpoPqcj4NejeEgJU+HjUaSxiS4TaYI7TQIVCktXk=
+github.com/gaurav04/go-practises/mysql v0.0.0-20200829055554-4af7f0db3688 h1:Rye7R5F3M/lSIXJHnNMUT6L4LPOu2S9bJWiOnItbUsc=
+github.com/gaurav04/go-practises/mysql v0.0.0-20200829055554-4af7f0db3688/go.mod h1:FPs+JRThHR70Hv1Z563ID+HUsLcXtC75N0ZiMU16LD8=
+github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
+github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=

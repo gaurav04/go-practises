@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gaurav04/go-practises/mysql/database"
+	"github.com/gaurav04/go-practises/inventroy_mgmt/database"
 )
 
 func getProductList() ([]Product, error) {
 	var products []Product
+	fmt.Println(database.DbConn)
 	results, err := database.DbConn.Query("SELECT * FROM products ORDER BY productid DESC LIMIT 10")
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -19,13 +21,12 @@ func getProductList() ([]Product, error) {
 		var product Product
 		results.Scan(&product.ProductID,
 			&product.Manufacturer,
-			&product.Sku,
-			&product.Upc,
 			&product.PricePerUnit,
 			&product.QuantityOnHand,
 			&product.ProductName)
 		products = append(products, product)
 	}
+	fmt.Println(products)
 	return products, nil
 }
 
@@ -40,14 +41,12 @@ func removeProduct(prodid int) error {
 }
 
 func insertProduct(product Product) (int, error) {
-	stmt, err := database.DbConn.Prepare("INSERT INTO products(manufacturer,sku,upc,pricePerUnit,quantityOnHand,productName) VALUES(?,?,?,?,?,?)")
+	stmt, err := database.DbConn.Prepare("INSERT INTO products(manufacturer,pricePerUnit,quantityOnHand,productName) VALUES(?,?,?,?)")
 	if err != nil {
 		log.Fatal(err)
 		return 0, err
 	}
 	result, err := stmt.Exec(product.Manufacturer,
-		product.Sku,
-		product.Upc,
 		product.PricePerUnit,
 		product.QuantityOnHand,
 		product.ProductName)
@@ -64,8 +63,6 @@ func getProduct(productID int) (*Product, error) {
 	row := database.DbConn.QueryRow(`SELECT 
 	productId, 
 	manufacturer, 
-	sku, 
-	upc, 
 	pricePerUnit, 
 	quantityOnHand, 
 	productName 
@@ -76,8 +73,6 @@ func getProduct(productID int) (*Product, error) {
 	err := row.Scan(
 		&product.ProductID,
 		&product.Manufacturer,
-		&product.Sku,
-		&product.Upc,
 		&product.PricePerUnit,
 		&product.QuantityOnHand,
 		&product.ProductName,
@@ -93,15 +88,11 @@ func getProduct(productID int) (*Product, error) {
 func updateProduct(product Product) error {
 	_, err := database.DbConn.Query(`UPDATE products SET 
 		manufacturer=?, 
-		sku=?, 
-		upc=?, 
 		pricePerUnit=?, 
 		quantityOnHand=?, 
 		productName=?
 		WHERE productId=?`,
 		product.Manufacturer,
-		product.Sku,
-		product.Upc,
 		product.PricePerUnit,
 		product.QuantityOnHand,
 		product.ProductName,
