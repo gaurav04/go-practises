@@ -9,7 +9,7 @@ func main() {
 	customers := GetCustomers()
 
 	for _, customer := range customers {
-		fmt.Println	(customer)
+		fmt.Println(customer)
 	}
 
 }
