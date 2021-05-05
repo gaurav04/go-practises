@@ -55,7 +55,7 @@ func main() {
 
 	environment := provider + "-" + env
 	details := map[string]map[string]string{
-		"aws-production": {"url": "kafka-manager.production.gh.pvt"},
+		"aws-production": {"url": "kafka-manager-production.gh.pvt"},
 		"aws-staging":    {"url": "kafka-manager-staging.gh.pvt"}}
 
 	filename := fmt.Sprintf("%s-%s.json", provider, env)
