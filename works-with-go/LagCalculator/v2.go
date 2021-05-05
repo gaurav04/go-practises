@@ -56,17 +56,14 @@ func main() {
 	environment := provider + "-" + env
 	details := map[string]map[string]string{
 		"aws-production": {"url": "kafka-manager-production.gh.pvt"},
-		"aws-staging":    {"url": "kafka-manager-staging.gh.pvt"}}
+		"aws-staging":    {"url": "kafka-manager-staging.gh.pvt"}
+	}
 
 	filename := fmt.Sprintf("%s-%s.json", provider, env)
-	fmt.Println(filename)
 
 	file, err := ioutil.ReadFile(filename)
 
-	if err != nil {
-		fmt.Println("Error reading file")
-		os.Exit(1)
-	}
+	checkError(err)
 
 	if err := json.Unmarshal(file, &topiclist); err != nil {
 		fmt.Println("Error parsing JSON", err)
@@ -89,9 +86,7 @@ func main() {
 			for topic, consumer_group := range x {
 				url := fmt.Sprintf("http://%s/api/status/%s/%s/%s/groupSummary", details[environment]["url"], cluster_name, consumer_group, "ZK")
 				resp, err := http.Get(url)
-				if err != nil {
-					log.Fatalln("Error fetching:", err) //Fatalln or any of the other "fatal" calls, the library prints the error message and then calls os.Exit(1), forcing the program to quit.
-				}
+				checkError(err)
 
 				defer resp.Body.Close()
 
@@ -100,9 +95,7 @@ func main() {
 				}
 
 				body, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Fatalln("Error reading body:", err)
-				}
+				checkError(err)
 
 				if err := json.Unmarshal(body, &objmap); err != nil {
 					log.Fatal(err)
@@ -126,6 +119,12 @@ func main() {
 
 }
 
+func checkError(err error) {
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func get_consumer_group_mapping(url string, name string, topics []string) map[string]string {
 	list_of_consumers := []string{}
 	topic_cgs_mapping := make(map[string]string)
@@ -133,9 +132,7 @@ func get_consumer_group_mapping(url string, name string, topics []string) map[st
 	fmt.Println(consumer_group_url)
 
 	resp, err := http.Get(consumer_group_url)
-	if err != nil {
-		log.Fatalln("Error fetching:", err)
-	}
+	checkError(err)
 
 	defer resp.Body.Close()
 
@@ -144,9 +141,7 @@ func get_consumer_group_mapping(url string, name string, topics []string) map[st
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln("Error reading body:", err)
-	}
+	checkError(err)
 
 	if err := json.Unmarshal(body, &consumerlist); err != nil {
 		log.Fatalln("Error decoing JSON", err)
