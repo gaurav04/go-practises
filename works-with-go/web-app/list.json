@@ -1,0 +1,20 @@
+[
+ {
+  "id": 1,
+  "firstName": "Gaurav",
+  "lastName": "Harsola",
+  "balance": 300
+ },
+ {
+  "id": 3,
+  "firstName": "Mintu",
+  "lastName": "Jain",
+  "balance": 2000
+ },
+ {
+  "id": 4,
+  "firstName": "Sanyaam",
+  "lastName": "Harsola",
+  "balance": 2839
+ }
+]
