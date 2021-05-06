@@ -1,0 +1,9 @@
+{
+    "email": "abc@gmail.com",
+    "jobtitle": "Devops Engineer",
+    "name": "Gaurav Harsola",
+    "phone": {
+        "home": "111111111",
+        "office": "2222222"
+    }
+}
