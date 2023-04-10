@@ -44,7 +44,7 @@ jobs:
           next=$(./semantic-release next)
           if [ "$next" != "$last" ]; then
             VERSION="v$next"
-            echo Releasing VERSION=$VERSION using $release_kind kind
+            echo Releasing VERSION=$VERSION
             ./semantic-release release
           else
             echo "No change detected between $last and $next"
@@ -82,7 +82,7 @@ jobs:
           next=$(./semantic-release next)
           if [ "$next" != "$last" ]; then
             VERSION="v$next"
-            echo Releasing VERSION=$VERSION using $release_kind kind
+            echo Releasing VERSION=$VERSION
             ./semantic-release release
           else
             echo "No change detected between $last and $next"
