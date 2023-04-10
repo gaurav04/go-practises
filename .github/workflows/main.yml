@@ -46,7 +46,8 @@ jobs:
           echo "  repo: go-practises" >> .release.yml
           echo "  user: gaurav04" >> .release.yml
           echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
-          echo ${VERSION}
+          echo detail are ${GITHUB_ENV}
+
           ./semantic-release release
           
       - name: Release
