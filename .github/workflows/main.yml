@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "commitFormat: conventional" > .release.yml
           echo "branch:" >> .release.yml
-          echo "  ${GITHUB_REF##*/}: rc" >> .release.yml
+          echo "  rc-*: rc" >> .release.yml
           echo "release: 'github'" >> .release.yml
           echo "github:" >> .release.yml
           echo "  repo: go-practises" >> .release.yml
