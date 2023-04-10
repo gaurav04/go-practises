@@ -7,6 +7,8 @@ on:
       - bugfix/*
       - fix/*
       - master
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
 jobs:
   release_job:
