@@ -38,7 +38,7 @@ jobs:
           echo "release: 'github'" >> .release.yml
           echo "github:" >> .release.yml
           echo "  repo: go-practises" >> .release.yml
-          echo "  user: dummy" >> .release.yml
+          echo "  user: gaurav04" >> .release.yml
           echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
           ./semantic-release release
           
@@ -51,7 +51,7 @@ jobs:
           echo "release: 'github'" >> .release.yml
           echo "github:" >> .release.yml
           echo "  repo: go-practises" >> .release.yml
-          echo "  user: dummy" >> .release.yml
+          echo "  user: gaurav04" >> .release.yml
           echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
           ./semantic-release release
           
