@@ -1,65 +1,51 @@
-name: Release Workflow
+name: Semantic Release
 
 on:
   push:
     branches:
-      - feature/*
-      - bugfix/*
-      - fix/*
-      - master
-env:
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - 'feature/*'
+      - 'bugfix/*'
+      - 'fix/*'
+      - 'master'
 
 jobs:
-  release_job:
-    name: Release Job
-    runs-on: ubuntu-20.04
-    env:
-      CI: 'true'
+  release:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
-
-      - name: branch
-        run: echo ${GITHUB_REF%/*}
-        
+          
       - name: Setup Semantic Release
         run: |
-          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.0.0/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
+          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.1.1/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
           unzip go-semantic-release.linux_x86_64.zip
           chmod +x ./go-semantic-release.linux_x86_64
           mv go-semantic-release.linux_x86_64 semantic-release
         
-      - name: Release Candidate
-        if: startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/') || startsWith(github.ref, 'refs/heads/fix/')
+      - name: Validate and Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "commitFormat: conventional" > .release.yml
-          echo "branch:" >> .release.yml
-          echo "  rc-*: rc" >> .release.yml
-          echo "release: 'github'" >> .release.yml
-          echo "github:" >> .release.yml
-          echo "  repo: go-practises" >> .release.yml
-          echo "  user: gaurav04" >> .release.yml
-          echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
-          echo detail are ${VERSION}
-          ./semantic-release release
+          VERSION="X.X.X"
           
-      - name: Release
-        if: github.ref == 'refs/heads/master'
-        run: |
-          echo "commitFormat: conventional" > .release.yml
-          echo "branch:" >> .release.yml
-          echo "  master: release" >> .release.yml
-          echo "release: 'github'" >> .release.yml
-          echo "github:" >> .release.yml
-          echo "  repo: go-practises" >> .release.yml
-          echo "  user: gaurav04" >> .release.yml
-          echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
-          echo detail are ${VERSION}
-          ./semantic-release release
+          if [[ "${{ github.ref }}" != "refs/heads/master" ]]; then
+            # use rc for non-master branches
+            release_kind="rc"
+          else
+            # use release for master branch
+            release_kind="release"
+          fi
           
+          last=$(./semantic-release last)
+          next=$(./semantic-release next)
+
+          # do not build unless changes were detected
+          if [ "$next" != "$last" ]; then
+            VERSION="v$next"
+            echo Releasing VERSION=$VERSION using $release_kind kind
+            ./semantic-release ${release_kind}
+          else
+            echo "No change detected between $last and $next"
+          fi
