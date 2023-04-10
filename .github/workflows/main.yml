@@ -9,43 +9,65 @@ on:
       - 'master'
 
 jobs:
-  release:
+  rc:
     runs-on: ubuntu-latest
+    if: |
+      startsWith(github.ref, 'refs/heads/feature/') ||
+      startsWith(github.ref, 'refs/heads/bugfix/') ||
+      startsWith(github.ref, 'refs/heads/fix/')
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-          
+          ref: ${{ github.ref }}
+
       - name: Setup Semantic Release
         run: |
-          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.1.1/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
+          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.0.0/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
           unzip go-semantic-release.linux_x86_64.zip
           chmod +x ./go-semantic-release.linux_x86_64
           mv go-semantic-release.linux_x86_64 semantic-release
-        
-      - name: Validate and Publish
+
+      - name: Configure and Run Semantic Release for RC
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="X.X.X"
-          
-          if [[ "${{ github.ref }}" != "refs/heads/master" ]]; then
-            # use rc for non-master branches
-            release_kind="rc"
-          else
-            # use release for master branch
-            release_kind="release"
-          fi
-          
-          last=$(./semantic-release last)
-          next=$(./semantic-release next)
+          echo "commitFormat: conventional" > .release.yml
+          echo "branch:" >> .release.yml
+          echo "  ${GITHUB_REF#refs/heads/}: rc" >> .release.yml
+          echo "release: 'github'" >> .release.yml
+          echo "github:" >> .release.yml
+          echo "  repo: 'go-practises'" >> .release.yml
+          echo "  user: 'gaurav04'" >> .release.yml
+          VERSION=$(./semantic-release next)
+          echo "Releasing VERSION=v${VERSION}"
+          ./semantic-release release
 
-          # do not build unless changes were detected
-          if [ "$next" != "$last" ]; then
-            VERSION="v$next"
-            echo Releasing VERSION=$VERSION using $release_kind kind
-            ./semantic-release ${release_kind}
-          else
-            echo "No change detected between $last and $next"
-          fi
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Semantic Release
+        run: |
+          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.0.0/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
+          unzip go-semantic-release.linux_x86_64.zip
+          chmod +x ./go-semantic-release.linux_x86_64
+          mv go-semantic-release.linux_x86_64 semantic-release
+
+      - name: Configure and Run Semantic Release for Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "commitFormat: conventional" > .release.yml
+          echo "branch:" >> .release.yml
+          echo "  master: release" >> .release.yml
+          echo "release: 'github'" >> .release.yml
+          echo "github:" >> .release.yml
+          echo "  repo: 'go-practises'" >> .release.yml
+          echo "  user: 'gaurav04'" >> .release.yml
+          VERSION=$(./semantic-release next)
+          echo "Releasing VERSION=v${VERSION}"
+          ./semantic-release release
