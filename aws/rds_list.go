@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds"
 )
 
+// define main function
 func main() {
 
 	var region string
