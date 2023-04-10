@@ -7,51 +7,55 @@ on:
       - bugfix/*
       - fix/*
       - master
-env:
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
 jobs:
   release_job:
     name: Release Job
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    inputs:
+      branch: ${{ github.ref }}
+      repo: go-practises
+      user: gaurav04
     env:
       CI: 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
-        
+        uses: actions/checkout@v2
+
       - name: Setup Semantic Release
-        run: |
-          curl -SL https://github.com/Nightapes/go-semantic-release/releases/download/v2.0.0/go-semantic-release.linux_x86_64.zip -o go-semantic-release.linux_x86_64.zip
-          unzip go-semantic-release.linux_x86_64.zip
-          chmod +x ./go-semantic-release.linux_x86_64
-          mv go-semantic-release.linux_x86_64 semantic-release
-        
+        uses: Nightapes/go-semantic-release-action@v2.0.0
+          
       - name: Release Candidate
-        if: startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/') || startsWith(github.ref, 'refs/heads/fix/')
+        if: startsWith(inputs.branch, 'refs/heads/feature/') || startsWith(inputs.branch, 'refs/heads/bugfix/') || startsWith(inputs.branch, 'refs/heads/fix/')
+        env:
+          RELEASE_BRANCH: rc
         run: |
           echo "commitFormat: conventional" > .release.yml
           echo "branch:" >> .release.yml
-          echo "  ${{ github.ref }}: rc" >> .release.yml
+          echo "  ${{ inputs.branch }}: ${{ env.RELEASE_BRANCH }}" >> .release.yml
           echo "release: 'github'" >> .release.yml
           echo "github:" >> .release.yml
-          echo "  repo: go-practises" >> .release.yml
-          echo "  user: gaurav04" >> .release.yml
-          echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "  repo: ${{ inputs.repo }}" >> .release.yml
+          echo "  user: ${{ inputs.user }}" >> .release.yml
+          VERSION=$(./semantic-release next | tr -d '\r\n')
+          echo "VERSION = v${VERSION}" >> $GITHUB_ENV
           ./semantic-release release
-          
+
       - name: Release
-        if: github.ref == 'refs/heads/master'
+        if: inputs.branch == 'refs/heads/master'
+        env:
+          RELEASE_BRANCH: release
         run: |
           echo "commitFormat: conventional" > .release.yml
           echo "branch:" >> .release.yml
-          echo "  master: release" >> .release.yml
+          echo "  master: ${{ env.RELEASE_BRANCH }}" >> .release.yml
           echo "release: 'github'" >> .release.yml
           echo "github:" >> .release.yml
-          echo "  repo: go-practises" >> .release.yml
-          echo "  user: gaurav04" >> .release.yml
-          echo "VERSION = v$(./semantic-release next | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "  repo: ${{ inputs.repo }}" >> .release.yml
+          echo "  user: ${{ inputs.user }}" >> .release.yml
+          VERSION=$(./semantic-release next | tr -d '\r\n')
+          echo "VERSION = v${VERSION}" >> $GITHUB_ENV
           ./semantic-release release
-          
