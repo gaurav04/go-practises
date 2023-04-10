@@ -39,9 +39,16 @@ jobs:
           echo "github:" >> .release.yml
           echo "  repo: 'go-practises'" >> .release.yml
           echo "  user: 'gaurav04'" >> .release.yml
-          VERSION=$(./semantic-release next)
-          echo "Releasing VERSION=v${VERSION}"
-          ./semantic-release release
+          VERSION="X.X.X"
+          last=$(./semantic-release last)
+          next=$(./semantic-release next)
+          if [ "$next" != "$last" ]; then
+            VERSION="v$next"
+            echo Releasing VERSION=$VERSION using $release_kind kind
+            ./semantic-release release
+          else
+            echo "No change detected between $last and $next"
+          fi
 
   release:
     runs-on: ubuntu-latest
@@ -70,6 +77,13 @@ jobs:
           echo "github:" >> .release.yml
           echo "  repo: 'go-practises'" >> .release.yml
           echo "  user: 'gaurav04'" >> .release.yml
-          VERSION=$(./semantic-release next)
-          echo "Releasing VERSION=v${VERSION}"
-          ./semantic-release release
+          VERSION="X.X.X"
+          last=$(./semantic-release last)
+          next=$(./semantic-release next)
+          if [ "$next" != "$last" ]; then
+            VERSION="v$next"
+            echo Releasing VERSION=$VERSION using $release_kind kind
+            ./semantic-release release
+          else
+            echo "No change detected between $last and $next"
+          fi
