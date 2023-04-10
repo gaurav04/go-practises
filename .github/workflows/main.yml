@@ -6,7 +6,7 @@ on:
       - feature/*
       - bugfix/*
       - fix/*
-      - master/*
+      - master
 
 jobs:
   release_job:
